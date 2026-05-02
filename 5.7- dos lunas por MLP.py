@@ -1,7 +1,24 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from perceptron_demo import two_moons     # generador del Listado 1
+
+def two_moons(n_samples=1000, r=10.0, w=6.0, d=1.0, seed=0):
+    """Genera n_samples por clase del problema de las dos lunas."""
+    rng = np.random.default_rng(seed)
+    # Luna A: semicírculo superior centrado en el origen
+    theta_A = rng.uniform(0, np.pi, n_samples)
+    rad_A   = rng.uniform(r - w/2, r + w/2, n_samples)
+    XA = np.column_stack([rad_A * np.cos(theta_A),
+                          rad_A * np.sin(theta_A)])
+    # Luna B: semicírculo inferior, desplazado (r, -d)
+    theta_B = rng.uniform(np.pi, 2*np.pi, n_samples)
+    rad_B   = rng.uniform(r - w/2, r + w/2, n_samples)
+    XB = np.column_stack([rad_B * np.cos(theta_B) + r,
+                          rad_B * np.sin(theta_B) - d])
+    X = np.vstack([XA, XB])
+    y = np.concatenate([ np.ones(n_samples), -np.ones(n_samples)])
+    idx = rng.permutation(len(X))
+    return X[idx], y[idx]
 
 # ---------- Datos ----------
 torch.manual_seed(0)
